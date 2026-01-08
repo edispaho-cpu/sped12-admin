@@ -1,26 +1,60 @@
-<h3>Transaksion i Ri</h3>
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zyra Këmbimit – Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<select id="txType">
-  <option value="HYRJE">HYRJE</option>
-  <option value="DALJE">DALJE</option>
-</select>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h3 {
+      margin-bottom: 10px;
+    }
+    select, input, button {
+      margin: 4px;
+      padding: 6px;
+    }
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
 
-<select id="txSource">
-  <option value="CASH">CASH</option>
-  <option value="BANKË">BANKË</option>
-</select>
+  <h3>Transaksion i Ri</h3>
 
-<select id="currency">
-  <option value="">Zgjidh monedhën</option>
-  <option value="ALL">ALL</option>
-  <option value="EUR">EUR</option>
-  <option value="USD">USD</option>
-  <option value="GBP">GBP</option>
-  <option value="CHF">CHF</option>
-</select>
+  <select id="txType">
+    <option value="HYRJE">HYRJE</option>
+    <option value="DALJE">DALJE</option>
+  </select>
 
-<input id="amount" type="number" placeholder="Shuma" />
-<input id="rate" type="number" placeholder="Kursi" value="1" />
-<input id="desc" placeholder="Përshkrimi" />
+  <select id="txSource">
+    <option value="CASH">CASH</option>
+    <option value="BANKË">BANKË</option>
+  </select>
 
-<button onclick="saveTransaction()">Ruaj Transaksion</button>
+  <select id="currency">
+    <option value="">Zgjidh monedhën</option>
+    <option value="ALL">ALL</option>
+    <option value="EUR">EUR</option>
+    <option value="USD">USD</option>
+    <option value="GBP">GBP</option>
+    <option value="CHF">CHF</option>
+  </select>
+
+  <input id="amount" type="number" placeholder="Shuma" />
+  <input id="rate" type="number" placeholder="Kursi" value="1" />
+  <input id="desc" placeholder="Përshkrimi" />
+
+  <br><br>
+
+  <button onclick="saveTransaction()">Ruaj Transaksion</button>
+
+  <!-- SCRIPTI NGARKOHET NË FUND – SHUMË E RËNDËSISHME -->
+  <script type="module" src="./app.js"></script>
+
+</body>
+</html>
