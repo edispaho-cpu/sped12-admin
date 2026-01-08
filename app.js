@@ -80,7 +80,34 @@ async function getCategories() {
   if (error) return [];
   return data.map(c => c.name);
 }
+window.saveTransaction = async function () {
+  const type = document.getElementById("txType").value;
+  const source = document.getElementById("txSource").value;
+  const currency = document.getElementById("currency").value;
+  const amount = Number(document.getElementById("amount").value);
+  const rate = Number(document.getElementById("rate").value || 1);
+  const description = document.getElementById("desc").value;
 
+  if (!currency || !amount) {
+    alert("Plotëso monedhën dhe shumën");
+    return;
+  }
+
+  const tx = {
+    type,
+    source,
+    currency,
+    amount,
+    rate,
+    amount_all: amount * rate,
+    description,
+    date: new Date().toISOString().slice(0, 10)
+  };
+
+  await addTransaction(tx);
+
+  alert("Transaksioni u ruajt");
+};
 /* ===============================
    INIT
 ================================ */
