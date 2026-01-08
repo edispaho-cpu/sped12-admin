@@ -1,9 +1,9 @@
 import { supabase } from "./supabase.js";
 
 window.saveTransaction = async () => {
-  const kind = kindEl.value;
-  const source = sourceEl.value;
-  const currency = currencyEl.value;
+  const kind = kindEl.value;           // BLERJE | SHITJE | HYRJE
+  const source = sourceEl.value;       // CASH | BANKË
+  const currency = currencyEl.value;   // EUR, USD, ALL...
   const amount = Number(amountEl.value);
   const rate = Number(rateEl.value || 1);
   const description = descEl.value || "";
@@ -15,30 +15,71 @@ window.saveTransaction = async () => {
 
   const table = source === "CASH" ? "balances_cash" : "balances_bank";
 
-  const { data: bal } = await supabase
+  // Merr balancat aktuale
+  const { data: balCurrency } = await supabase
     .from(table)
     .select("amount")
     .eq("currency", currency)
     .single();
 
-  let newAmount = bal.amount;
+  const { data: balALL } = await supabase
+    .from(table)
+    .select("amount")
+    .eq("currency", "ALL")
+    .single();
 
-  if (kind === "HYRJE") newAmount += amount;
-  if (kind === "BLERJE") newAmount += amount;      // merr valutë
-  if (kind === "SHITJE") newAmount -= amount;      // jep valutë
+  let currAmount = balCurrency.amount;
+  let allAmount = balALL.amount;
 
-  if (newAmount < 0) {
-    alert("Balancë e pamjaftueshme");
-    return;
+  // 🔹 HYRJE CASH (ADMIN)
+  if (kind === "HYRJE") {
+    currAmount += amount;
   }
 
+  // 🔹 BLERJE (klient)
+  if (kind === "BLERJE") {
+    const costALL = amount * rate;
+
+    if (allAmount < costALL) {
+      alert("Nuk ka mjaft ALL në arkë");
+      return;
+    }
+
+    currAmount += amount;      // merr EUR
+    allAmount -= costALL;      // jep ALL
+  }
+
+  // 🔹 SHITJE (klient)
+  if (kind === "SHITJE") {
+    const gainALL = amount * rate;
+
+    if (currAmount < amount) {
+      alert("Nuk ka mjaft " + currency + " në arkë");
+      return;
+    }
+
+    currAmount -= amount;      // jep EUR
+    allAmount += gainALL;      // merr ALL
+  }
+
+  // Ruaj transaksionin
   await supabase.from("transactions").insert({
-    kind, source, currency, amount, rate, description
+    kind,
+    source,
+    currency,
+    amount,
+    rate,
+    description
   });
 
+  // Përditëso balancat
   await supabase.from(table)
-    .update({ amount: newAmount })
+    .update({ amount: currAmount })
     .eq("currency", currency);
+
+  await supabase.from(table)
+    .update({ amount: allAmount })
+    .eq("currency", "ALL");
 
   loadAll();
 };
