@@ -1,34 +1,18 @@
-<!DOCTYPE html>
-<html lang="sq">
-<head>
-  <meta charset="UTF-8" />
-  <title>SPED12 – Admin</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
+<h3>Transaksion i Ri</h3>
 
-<h2>SPED12 – Admin Login</h2>
+<select id="txType">
+  <option value="HYRJE">HYRJE</option>
+  <option value="DALJE">DALJE</option>
+</select>
 
-<div id="loginBox">
-  <input id="email" type="email" placeholder="Email" />
-  <input id="password" type="password" placeholder="Password" />
-  <button onclick="login()">Login</button>
-  <p id="loginMsg"></p>
-</div>
+<select id="txSource">
+  <option value="CASH">CASH</option>
+  <option value="BANKË">BANKË</option>
+</select>
 
-<div id="adminPanel" style="display:none">
-  <h3>Admin Panel</h3>
+<input id="currency" placeholder="ALL / EUR / USD" />
+<input id="amount" type="number" placeholder="Shuma" />
+<input id="rate" type="number" placeholder="Kursi" value="1" />
+<input id="desc" placeholder="Përshkrimi" />
 
-  <input id="amount" type="number" placeholder="Shuma" />
-  <input id="currency" placeholder="Monedha (ALL, EUR…)" />
-  <button onclick="addTransaction()">Shto Transaksion</button>
-
-  <h4>Transaksione</h4>
-  <ul id="txList"></ul>
-
-  <button onclick="logout()">Logout</button>
-</div>
-
-<script type="module" src="app.js"></script>
-</body>
-</html>
+<button onclick="saveTransaction()">Ruaj Transaksion</button>
