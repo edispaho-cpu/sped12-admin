@@ -43,34 +43,54 @@ async function loadBalances() {
 /* =========================
    TRANSAKSIONE KLIENTI
 ========================= */
-
 async function saveClientTransaction() {
-  const kind = document.getElementById("kind").value; // BLERJE / SHITJE
-  const source = document.getElementById("source").value; // CASH / BANKË
+  const kind = document.getElementById("kind").value;           // BLERJE | SHITJE
+  const source = document.getElementById("source").value;       // CASH | BANKË
   const fromCurrency = document.getElementById("fromCurrency").value;
   const toCurrency = document.getElementById("toCurrency").value;
-  const amountFrom = Number(document.getElementById("amountFrom").value);
-  const rate = Number(document.getElementById("rate").value);
-  const description = document.getElementById("desc").value;
+  const amount = Number(document.getElementById("amount").value);
+  const rate = Number(document.getElementById("rate").value || 1);
+  const description = document.getElementById("description").value || "";
 
-  if (!fromCurrency || !toCurrency || !amountFrom || !rate) {
-    alert("Plotëso të gjitha fushat");
+  if (!amount || amount <= 0) {
+    alert("Shuma nuk është e vlefshme");
     return;
   }
 
-  const amountTo = amountFrom * rate;
+  const amountFrom = amount;
+  const amountTo = amount * rate;
 
-  // Bilancet aktuale
-  const balFrom = await getBalance(fromCurrency, source);
-  const balTo = await getBalance(toCurrency, source);
+  const balanceTable = source === "CASH" ? "balances_cash" : "balances_bank";
 
-  if (kind === "SHITJE" && balFrom < amountFrom) {
-    alert("Bilanc i pamjaftueshëm");
+  // 🔹 Merr balancat aktuale
+  const { data: fromBal } = await supabase
+    .from(balanceTable)
+    .select("amount")
+    .eq("currency", fromCurrency)
+    .single();
+
+  const { data: toBal } = await supabase
+    .from(balanceTable)
+    .select("amount")
+    .eq("currency", toCurrency)
+    .single();
+
+  const fromAmount = fromBal?.amount ?? 0;
+  const toAmount = toBal?.amount ?? 0;
+
+  // 🔴 KONTROLL PROFESIONAL BILANCI
+  if (kind === "BLERJE" && toAmount < amountTo) {
+    alert("Nuk ka mjaft " + toCurrency + " në arkë");
     return;
   }
 
-  // Ruaj transaksionin
-  const { error } = await supabase.from("transactions").insert({
+  if (kind === "SHITJE" && fromAmount < amountFrom) {
+    alert("Nuk ka mjaft " + fromCurrency + " në arkë");
+    return;
+  }
+
+  // 🔹 Ruaj transaksionin
+  const { error: txErr } = await supabase.from("transactions").insert({
     kind,
     source,
     from_currency: fromCurrency,
@@ -81,24 +101,36 @@ async function saveClientTransaction() {
     description
   });
 
-  if (error) {
-    alert("Gabim në ruajtje");
+  if (txErr) {
+    alert("Gabim në ruajtjen e transaksionit");
+    console.error(txErr);
     return;
   }
 
-  // Përditëso bilancet
+  // 🔹 Përditëso balancat
   if (kind === "BLERJE") {
-    await setBalance(fromCurrency, source, balFrom + amountFrom);
-    await setBalance(toCurrency, source, balTo - amountTo);
-  } else {
-    await setBalance(fromCurrency, source, balFrom - amountFrom);
-    await setBalance(toCurrency, source, balTo + amountTo);
+    // + valuta, - ALL
+    await supabase.from(balanceTable)
+      .update({ amount: fromAmount + amountFrom })
+      .eq("currency", fromCurrency);
+
+    await supabase.from(balanceTable)
+      .update({ amount: toAmount - amountTo })
+      .eq("currency", toCurrency);
   }
 
-  alert("Transaksioni u regjistrua");
+  if (kind === "SHITJE") {
+    // - valuta, + ALL
+    await supabase.from(balanceTable)
+      .update({ amount: fromAmount - amountFrom })
+      .eq("currency", fromCurrency);
 
-  document.getElementById("amountFrom").value = "";
-  document.getElementById("desc").value = "";
+    await supabase.from(balanceTable)
+      .update({ amount: toAmount + amountTo })
+      .eq("currency", toCurrency);
+  }
+
+  alert("Transaksioni u regjistrua me sukses");
 
   loadBalances();
   loadTransactions();
