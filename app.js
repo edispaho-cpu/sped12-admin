@@ -120,7 +120,7 @@ async function loadTransactions() {
   data.forEach(t => {
     const li = document.createElement("li");
     li.innerText =
-      `${t.kind} | ${t.source} | ${t.amount_from} ${t.from_currency} → ${t.amount_to} ${t.to_currency}`;
+      `${t.kind} | ${t.source} | ${t.amount_from} ${t.from_currency} → ${t.amount_to} ${t.to_currency} @ ${t.rate}`;
     list.appendChild(li);
   });
 }
