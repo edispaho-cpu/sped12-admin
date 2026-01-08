@@ -1,18 +1,58 @@
-<h3>Transaksion i Ri</h3>
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <title>SPED12 – Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-<select id="txType">
-  <option value="HYRJE">HYRJE</option>
-  <option value="DALJE">DALJE</option>
-</select>
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <h2>SPED12 – Admin Login</h2>
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <div id="loginMsg"></div>
+  </div>
 
-<select id="txSource">
-  <option value="CASH">CASH</option>
-  <option value="BANKË">BANKË</option>
-</select>
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" style="display:none">
 
-<input id="currency" placeholder="ALL / EUR / USD" />
-<input id="amount" type="number" placeholder="Shuma" />
-<input id="rate" type="number" placeholder="Kursi" value="1" />
-<input id="desc" placeholder="Përshkrimi" />
+    <h2>Admin Panel</h2>
+    <button onclick="logout()">Logout</button>
 
-<button onclick="saveTransaction()">Ruaj Transaksion</button>
+    <hr />
+
+    <h3>Transaksion i Ri</h3>
+
+    <select id="txType">
+      <option value="HYRJE">HYRJE</option>
+      <option value="DALJE">DALJE</option>
+    </select>
+
+    <select id="txSource">
+      <option value="CASH">CASH</option>
+      <option value="BANKË">BANKË</option>
+    </select>
+
+    <input id="currency" placeholder="ALL / EUR / USD" />
+    <input id="amount" type="number" placeholder="Shuma" />
+    <input id="rate" type="number" placeholder="Kursi" value="1" />
+    <input id="desc" placeholder="Përshkrimi" />
+
+    <button onclick="saveTransaction()">Ruaj Transaksion</button>
+
+    <hr />
+
+    <h3>Transaksione</h3>
+    <ul id="txList"></ul>
+
+  </div>
+
+  <!-- SCRIPTS (KRITIKE – MOS I NDRYSHO) -->
+  <script type="module" src="supabase.js"></script>
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
