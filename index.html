@@ -2,22 +2,17 @@
 <html lang="sq">
 <head>
   <meta charset="UTF-8" />
-  <title>Zyra Këmbimit – Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    select, input, button { margin: 4px; padding: 6px; }
-    #balancesBox div { margin: 2px 0; }
-    li { border-bottom: 1px solid #ddd; padding: 6px 0; }
-  </style>
+  <title>SPED12 – Admin</title>
+  <script type="module" src="app.js"></script>
 </head>
 <body>
 
-<h2>Transaksion Klienti</h2>
+<h2>Transaksion i Ri</h2>
 
 <select id="kind">
-  <option value="BLERJE">BLERJE</option>
-  <option value="SHITJE">SHITJE</option>
+  <option value="HYRJE">HYRJE CASH</option>
+  <option value="BLERJE">BLERJE (klient)</option>
+  <option value="SHITJE">SHITJE (klient)</option>
 </select>
 
 <select id="source">
@@ -25,36 +20,30 @@
   <option value="BANKË">BANKË</option>
 </select>
 
-<select id="fromCurrency">
+<select id="currency">
+  <option value="ALL">ALL</option>
   <option value="EUR">EUR</option>
   <option value="USD">USD</option>
   <option value="GBP">GBP</option>
   <option value="CHF">CHF</option>
-  <option value="ALL">ALL</option>
 </select>
 
-<select id="toCurrency">
-  <option value="ALL">ALL</option>
-  <option value="EUR">EUR</option>
-  <option value="USD">USD</option>
-</select>
-
-<input id="amountFrom" type="number" placeholder="Shuma" />
-<input id="rate" type="number" placeholder="Kursi" />
+<input id="amount" type="number" placeholder="Shuma" />
+<input id="rate" type="number" value="1" placeholder="Kursi" />
 <input id="desc" placeholder="Përshkrimi" />
 
-<br><br>
-<button onclick="saveClientTransaction()">Ruaj Transaksion</button>
+<button onclick="saveTransaction()">Ruaj Transaksion</button>
 
-<hr>
+<hr/>
 
-<div id="balancesBox"></div>
+<h3>Balanci CASH</h3>
+<ul id="cashBalances"></ul>
 
-<hr>
+<h3>Balanci BANKË</h3>
+<ul id="bankBalances"></ul>
 
 <h3>Lista e Transaksioneve</h3>
 <ul id="txList"></ul>
 
-<script type="module" src="./app.js"></script>
 </body>
 </html>
