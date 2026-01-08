@@ -128,3 +128,5 @@ window.getBalance = getBalance;
 window.setBalance = setBalance;
 window.addCategory = addCategory;
 window.getCategories = getCategories;
+window.saveTransaction = saveTransaction;
+
