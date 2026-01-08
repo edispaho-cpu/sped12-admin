@@ -45,3 +45,72 @@ async function loadTransactions() {
     txList.appendChild(li);
   });
 }
+async function addRealTransaction({
+  type,        // 'HYRJE' | 'DALJE'
+  source,      // 'CASH' | 'BANKË'
+  currency,    // 'ALL', 'EUR', 'USD'
+  amount,
+  rate,
+  description
+}) {
+  const amount_all = amount * rate;
+
+  const table = source === 'CASH'
+    ? 'balances_cash'
+    : 'balances_bank';
+
+  // Merr balancën aktuale
+  const { data: bal, error: balErr } = await supabase
+    .from(table)
+    .select('amount')
+    .eq('currency', currency)
+    .single();
+
+  if (balErr) {
+    alert('Gabim në lexim balance');
+    return;
+  }
+
+  const current = bal.amount;
+
+  // Kontroll DALJE
+  if (type === 'DALJE' && current < amount) {
+    alert('Balancë e pamjaftueshme');
+    return;
+  }
+
+  // Ruaj transaksionin
+  const { error: txErr } = await supabase.from('transactions').insert({
+    type,
+    source,
+    currency,
+    amount,
+    rate,
+    amount_all,
+    description
+  });
+
+  if (txErr) {
+    alert('Gabim në regjistrim transaksioni');
+    return;
+  }
+
+  // Përditëso balancën
+  const newAmount =
+    type === 'HYRJE'
+      ? current + amount
+      : current - amount;
+
+  const { error: updErr } = await supabase
+    .from(table)
+    .update({ amount: newAmount })
+    .eq('currency', currency);
+
+  if (updErr) {
+    alert('Gabim në përditësim balance');
+    return;
+  }
+
+  alert('Transaksioni u regjistrua me sukses');
+}
+window.addRealTransaction = addRealTransaction;
